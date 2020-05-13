@@ -34,12 +34,19 @@ class Falcon(models.Model):
     weight_old = models.PositiveSmallIntegerField()
     photos_old = models.ImageField()
 
+    def __str__(self):
+        return 'Falcon name: ' + str(self.name) + ', ring: ' + str(self.ring)
+
 class Pair(models.Model):
     """ Model for a breeding pair """
     
-    male = models.ForeignKey(Falcon, on_delete=models.CASCADE, related_name='_male')
-    female = models.ForeignKey(Falcon, on_delete=models.CASCADE, related_name='_female')
+    male = models.ForeignKey(Falcon, on_delete=models.CASCADE, related_name='+')
+    female = models.ForeignKey(Falcon, on_delete=models.CASCADE, related_name='+')
     offspring = models.ManyToManyField(Falcon)
+
+    def __str__(self):
+        print(self.keys())
+        return 'Pair:\nmale name: ' + str(self.male.name) + ', ring: ' + str(self.male.ring) + ';\n' + 'female name: ' + str(self.female.name) + ', ring: ' + str(self.female.ring)
 
 class Aviary(models.Model):
     """ Model for a single aviary """
@@ -47,3 +54,6 @@ class Aviary(models.Model):
     occupied = models.BooleanField()
     pair = models.ForeignKey(Pair, on_delete=models.CASCADE)
     falcons = models.ManyToManyField(Falcon)
+
+    def __str__(self):
+        return 'Aviary id: ' + str(self.id) + '\noccupied: ' + str(self.occupied)
