@@ -1,0 +1,15 @@
+{% extends "base_generic.html" %}
+
+{%block title%}<title>Falcon list</title>{%endblock%}
+
+{% block content %}
+    <h2>List of all falcons:</h2>
+    <ul>
+        {% for falcon in object_list %}
+            <li>
+                {{ falcon.name }}
+                {{ falcon.ring }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
