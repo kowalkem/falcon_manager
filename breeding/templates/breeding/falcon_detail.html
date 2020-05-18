@@ -3,6 +3,10 @@
 {%block title%}<title>Falcon list</title>{%endblock%}
 
 {% block content %}
-  <h1>Falcon manager</h1>
-  <p>Welcome to falcon manager - a system for managing your breeding project!</p>
+  <h2>Details of falcon: {{ falcon.name }}</h2>
+  <ul>
+    {% for name, value in falcon.get_fields_for_template %}
+      <li>{{ name }}: {{ value }}</li>
+    {% endfor %}
+  </ul>
 {% endblock %}

@@ -6,20 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Add additional CSS in static file -->
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'breeding/css/styles.css' %}">
 </head>
 <body>
-    <header>
-
+    <header class="header">
+        <h1>Falcon breeding project manager</h1>
     </header>
-    <nav>
+    <nav class="nav">
         {% block nav %}
             <ul>
                 <li><a href="{% url 'breeding:falcons' %}">List of all falcons</a></li>
             </ul>
         {% endblock %}
     </nav>
-    <main>
+    <main class="main">
         {% block content %}{% endblock %}
         {% block pagination %}
             {% if is_paginated %}
@@ -39,7 +39,7 @@
             {% endif %}
         {% endblock %} 
     </main>
-    <footer>
+    <footer class="footer">
         {% block footer %}
         {% endblock %}
     </footer>

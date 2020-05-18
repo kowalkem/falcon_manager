@@ -34,6 +34,9 @@ class Falcon(models.Model):
     weight_old = models.PositiveSmallIntegerField(null=True, blank=True)
     photos_old = models.ImageField(null=True, blank=True)
 
+    def get_fields_for_template(self):
+        return [(field.verbose_name, field.value_to_string(self)) for field in Falcon._meta.fields]
+
     def __str__(self):
         return 'Falcon name: ' + str(self.name) + ', ring: ' + str(self.ring)
 
