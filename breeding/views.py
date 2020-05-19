@@ -1,5 +1,5 @@
-from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse
+# from django.shortcuts import get_object_or_404, render, reverse, redirect
+# from django.http import HttpResponse
 from django.views import generic
 from .models import Falcon
 
@@ -16,3 +16,8 @@ class FalconList(generic.ListView):
 class FalconDetail(generic.DetailView):
     """ Renders info about falcon with specified id """
     model = Falcon
+
+class FalconCreate(generic.edit.CreateView):
+    """ Form for creating new falcon """
+    model = Falcon
+    fields = '__all__'

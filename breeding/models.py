@@ -1,4 +1,6 @@
 from django.db import models
+from django.shortcuts import reverse
+
 
 # Models for breeding app
 
@@ -12,8 +14,7 @@ class Falcon(models.Model):
     
     name = models.CharField(max_length=30, null=True, blank=True)
     ring = models.CharField(max_length=30, null=True, blank=True)
-    species = models.CharField(max_length=30, null=True, blank=True)
-    species_latin = models.CharField(max_length=30, null=True, blank=True)
+    species = models.ForeignKey('Species', on_delete=models.CASCADE, related_name='_species', null=True, blank=True)
     sex = models.CharField(max_length=1, choices=SEX, null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
     CITES_num = models.CharField(max_length=30, null=True, blank=True)
@@ -35,7 +36,12 @@ class Falcon(models.Model):
     photos_old = models.ForeignKey('Photo', on_delete=models.CASCADE, related_name='_photos_old', null=True, blank=True)
 
     def get_fields_for_template(self):
+        """ Gets iterable for the loop in template """
         return [(field.name, field.verbose_name, field.value_to_string(self)) for field in Falcon._meta.fields]
+
+    def get_absolute_url(self):
+        """ Returns the url to access a detail record for this falcon """
+        return reverse('breeding:falcon-detail', args=[str(self.id)])
 
     def __str__(self):
         return 'Falcon name: ' + str(self.name) + ', ring: ' + str(self.ring)
@@ -68,3 +74,12 @@ class Photo(models.Model):
 
     def __str__(self):
         return 'Falcon Photo'
+
+class Species(models.Model):
+    """ Model to enable using predefined species """
+
+    name = models.CharField(max_length=30, null=True, blank=True)
+    latin = models.CharField(max_length=30, null=True, blank=True)
+
+    def __str__(self):
+        return self.name

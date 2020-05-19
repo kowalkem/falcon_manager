@@ -7,7 +7,7 @@
     <ul>
         {% for falcon in object_list %}
             <li>
-                <p>Falcon named: <a href="{% url 'breeding:falcon_detail' falcon.id %}">{{ falcon.name }}</a> with ring no.: {{ falcon.ring }}</p>
+                <p>Falcon named: <a href="{% url 'breeding:falcon-detail' falcon.id %}">{{ falcon.name }}</a> with ring no.: {{ falcon.ring }}</p>
             </li>
         {% endfor %}
     </ul>
