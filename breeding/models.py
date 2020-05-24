@@ -1,6 +1,25 @@
 from django.db import models
 from django.shortcuts import reverse
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
+# Validators for breeding app
+
+def validate_male(value):
+    falcon = Falcon.objects.get(pk=value)
+    if falcon.sex != 'M':
+        raise ValidationError(
+            _('%(value)s is not a male falcon'),
+            params={'value': falcon.name},
+        )
+
+def validate_female(value):
+    falcon = Falcon.objects.get(pk=value)
+    if falcon.sex != 'F':
+        raise ValidationError(
+            _('%(value)s is not a female falcon'),
+            params={'value': falcon.name},
+        )
 
 # Models for breeding app
 
@@ -49,8 +68,8 @@ class Falcon(models.Model):
 class Pair(models.Model):
     """ Model for a breeding pair """
     
-    male = models.ForeignKey(Falcon, on_delete=models.CASCADE, related_name='+')
-    female = models.ForeignKey(Falcon, on_delete=models.CASCADE, related_name='+')
+    male = models.ForeignKey(Falcon, on_delete=models.CASCADE, related_name='+', validators=[validate_male])
+    female = models.ForeignKey(Falcon, on_delete=models.CASCADE, related_name='+', validators=[validate_female])
     offspring = models.ManyToManyField(Falcon, blank=True)
 
     def __str__(self):
