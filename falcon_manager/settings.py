@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'breeding.apps.BreedingConfig',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
