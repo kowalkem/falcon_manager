@@ -1,15 +1,20 @@
-{% extends 'breeding/base_generic.html' %}
+{% extends "base_generic.html" %}
+{% load crispy_forms_tags %}
+
 {% block content %}
 <div>
-    <form method='POST'>
+    <form method="POST">
         {% csrf_token %}
         <fieldset>
             <legend>Register</legend>
-            {{ form }}
+            {{ form|crispy }}
         </fieldset>
         <div>
             <button type="submit">Sign Up</button>
         </div>
     </form>
+    <div>
+        <small>Alredy have an account? <a href="#">Log in</a></small>
+    </div>
 </div>
 {% endblock %}
