@@ -19,22 +19,27 @@
 
 <body>
     <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">Falcon manager</a>
+        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="{% url 'breeding:index' %}">Falcon manager</a>
         <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse"
             data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        <!-- Serach field below -->
         <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
-        {% block auth %}
         <ul class="navbar-nav flex-row px-3">
+            {% if user.is_authenticated %}
             <li class="nav-item text-nowrap">
-                <a class="nav-link ml-2 mr-2" href="#">Login</a>
+                <a class="nav-link ml-2 mr-2" href="{% url 'users:logout' %}">Log out</a>
+            </li>
+            {% else %}
+            <li class="nav-item text-nowrap">
+                <a class="nav-link ml-2 mr-2" href="{% url 'users:login' %}">Log in</a>
             </li>
             <li class="nav-item text-nowrap">
-                <a class="nav-link ml-2 mr-2" href="{% url 'register' %}">Sign up</a>
+                <a class="nav-link ml-2 mr-2" href="{% url 'users:register' %}">Sign up</a>
             </li>
+            {% endif %}
         </ul>
-        {% endblock %}
     </nav>
 
     <div class="container-fluid">

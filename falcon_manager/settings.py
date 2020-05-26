@@ -133,3 +133,7 @@ MEDIA_URL = '/media/'
 # Crispy forms settings
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# Authorisation settings
+
+LOGIN_REDIRECT_URL = 'breeding:index'
