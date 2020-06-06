@@ -1,8 +1,8 @@
 from django.views import generic
 from django.shortcuts import render
+from django.contrib.auth.mixins import
 from .models import Falcon
-
-# Views for breeding app
+from .forms import FalconCreateForm
 
 
 def index(request):
@@ -31,9 +31,13 @@ class FalconDetail(generic.DetailView):
 
 
 class FalconCreate(generic.edit.CreateView):
-    """ Form for creating new falcon """
+    """ View for creating new falcon """
     model = Falcon
-    fields = '__all__'
+    form_class = FalconCreateForm
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super(FalconCreate, self).get_context_data(**kwargs)
