@@ -10,3 +10,13 @@ class FalconCreateForm(forms.ModelForm):
 
         model = Falcon
         exclude = ('owner',)
+
+
+class FalconUpdateForm(forms.ModelForm):
+    """Form definition for FalconUpdate."""
+
+    class Meta:
+        """Meta definition for FalconUpdateform."""
+
+        model = Falcon
+        exclude = ('owner',)

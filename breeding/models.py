@@ -72,7 +72,7 @@ class Falcon(models.Model):
 
     def get_fields_for_template(self):
         """ Gets iterable for the loop in template """
-        return [(field.name, field.verbose_name, field.value_to_string(self)) for field in Falcon._meta.fields]
+        return [(field.name, field.verbose_name, field.value_to_string(self)) for field in Falcon._meta.fields if field.name != 'owner' and field.name != 'id']
 
     def get_absolute_url(self):
         """ Returns the url to access a detail record for this falcon """
