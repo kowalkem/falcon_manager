@@ -30,7 +30,7 @@ def profile(request):
             username = u_form.cleaned_data.get('username')
             messages.success(
                 request, f'Account successfully updated for {username}!')
-            return redirect('users:login')
+            return redirect('users:profile')
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)

@@ -13,6 +13,7 @@ def index(request):
 class FalconList(LoginRequiredMixin, generic.ListView):
     """ Renders list of all falcons """
     model = Falcon
+    paginate_by = 10
 
     def get_queryset(self):
         return Falcon.objects.filter(owner=self.request.user)

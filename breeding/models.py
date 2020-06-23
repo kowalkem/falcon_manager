@@ -69,6 +69,7 @@ class Falcon(models.Model):
     photos_old = models.ForeignKey(
         'Photo', on_delete=models.CASCADE, related_name='_photos_old', null=True, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    additional_info = models.CharField(max_length=255, null=True, blank=True)
 
     def get_fields_for_template(self):
         """ Gets iterable for the loop in template """
