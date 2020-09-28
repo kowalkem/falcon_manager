@@ -1,6 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+{% if object_list %}
 <ul>
     {% for falcon in object_list %}
     <li>
@@ -9,4 +10,7 @@
     </li>
     {% endfor %}
 </ul>
+{% else %}
+<p>No records to show</p>
+{% endif %}
 {% endblock %}
