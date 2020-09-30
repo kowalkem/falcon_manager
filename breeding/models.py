@@ -110,12 +110,14 @@ class Pair(models.Model):
     """ Model for a breeding pair """
 
     male = models.ForeignKey(
-        Falcon, on_delete=models.CASCADE, related_name="+", validators=[validate_male]
+        Falcon, on_delete=models.PROTECT, related_name="+", validators=[validate_male]
     )
     female = models.ForeignKey(
-        Falcon, on_delete=models.CASCADE, related_name="+", validators=[validate_female]
+        Falcon, on_delete=models.PROTECT, related_name="+", validators=[validate_female]
     )
-    offspring = models.ManyToManyField(Falcon, blank=True)
+    offspring = models.ForeignKey(
+        Falcon, on_delete=models.PROTECT, null=True, blank=True
+    )
 
     def __str__(self):
         return (
