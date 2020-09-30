@@ -109,6 +109,7 @@ class Falcon(models.Model):
 class Pair(models.Model):
     """ Model for a breeding pair """
 
+    number = models.IntegerField()
     male = models.ForeignKey(
         Falcon, on_delete=models.PROTECT, related_name="+", validators=[validate_male]
     )
@@ -118,6 +119,10 @@ class Pair(models.Model):
     offspring = models.ForeignKey(
         Falcon, on_delete=models.PROTECT, null=True, blank=True
     )
+
+    def get_absolute_url(self):
+        """ Returns the url to access a detail record for this pair """
+        return reverse("breeding:pair-detail", args=[str(self.id)])
 
     def __str__(self):
         return (

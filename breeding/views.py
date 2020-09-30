@@ -152,6 +152,8 @@ class PairCreate(LoginRequiredMixin, generic.edit.CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(PairCreate, self).get_context_data(**kwargs)
+        context["form"].fields["male"].queryset = Falcon.objects.filter(sex="M")
+        context["form"].fields["female"].queryset = Falcon.objects.filter(sex="F")
         context["title"] = "Add a new pair"
         return context
 

@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<h1 class="h5">Details of pair: {{ pair.id }}</h1>
+<h1 class="h5">Details of pair number: {{ pair.number }}</h1>
 <p>Male named: <a href="{% url 'breeding:falcon-detail' pair.male.id %}">{{ pair.male.name }}</a> with ring no.:
     {{ pair.male.ring }}</br>
     Female named: <a href="{% url 'breeding:falcon-detail' pair.female.id %}">{{ pair.female.name }}</a> with

@@ -29,7 +29,7 @@ class PairCreateForm(forms.ModelForm):
         """Meta definition for PairCreateform."""
 
         model = Pair
-        exclude = ("owner",)
+        exclude = ()
 
 
 class PairUpdateForm(forms.ModelForm):
@@ -39,4 +39,4 @@ class PairUpdateForm(forms.ModelForm):
         """Meta definition for PairUpdateform."""
 
         model = Pair
-        exclude = ("owner",)
+        exclude = ()

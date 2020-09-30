@@ -5,7 +5,7 @@
 <ul>
     {% for pair in object_list %}
     <li>
-        <h4>Pair id: <a href="{% url 'breeding:pair-detail' pair.id %}">{{ pair.id }}</a></h4>
+        <h4>Pair number: <a href="{% url 'breeding:pair-detail' pair.id %}">{{ pair.number }}</a></h4>
         <p>Male named: <a href="{% url 'breeding:falcon-detail' pair.male.id %}">{{ pair.male.name }}</a> with ring no.:
             {{ pair.male.ring }}</br>
             Female named: <a href="{% url 'breeding:falcon-detail' pair.female.id %}">{{ pair.female.name }}</a> with
