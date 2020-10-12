@@ -3,8 +3,8 @@
 {% block content %}
 <form action="" method="post">
     {% csrf_token %}
-    <h4>Are you sure to delete pair number "{{ object.id }}"?</h4>
+    <h4>Are you sure to delete the aviary "{{ object.name }}"?</h4>
     <button class="btn btn-outline-danger" type="submit" value="Submit">Delete</button>
-    <a href="{% url 'breeding:pair-detail' object.id %}" class="btn btn-outline-secondary">Cancel</a>
+    <a href="{% url 'breeding:aviary-detail' object.id %}" class="btn btn-outline-secondary">Cancel</a>
 </form>
 {% endblock %}

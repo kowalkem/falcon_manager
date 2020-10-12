@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+{% if object_list %}
+<ul>
+    {% for aviary in object_list %}
+    <li>
+        <h4>Aviary number: <a href="{% url 'breeding:aviary-detail' aviary.id %}">{{ aviary.number }}</a></h4>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No records to show</p>
+{% endif %}
+<a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'breeding:aviary-create' %}">Add new aviary</a>
+{% endblock %}

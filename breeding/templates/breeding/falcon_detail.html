@@ -14,11 +14,38 @@
   <li>{{ verbose }}: <a href="{{ falcon.photos_young.url }}">pdf</a></li>
   {% elif name == 'photos_old' and value %}
   <li>{{ verbose }}: <a href="{{ falcon.photos_old.url }}">pdf</a></li>
+  {% elif name == 'father' and falcon.father %}
+  <li>{{ verbose }}: <a href="{% url 'breeding:falcon-detail' falcon.father.id %}">{{ falcon.father.name }}</a></li>
+  {% elif name == 'mother' and falcon.mother %}
+  <li>{{ verbose }}: <a href="{% url 'breeding:falcon-detail' falcon.mother.id %}">{{ falcon.mother.name }}</a></li>
+  {% elif name == 'species' and value %}
+  <li>{{ verbose }}: {{ falcon.species.name }}</li>
   {% else %}
   <li>{{ verbose }}: {{ value }}</li>
   {% endif %}
   {% endfor %}
+  <li>Youngsters:
+    <ul>
+      {% for young in falcon.get_youngsters %}
+      <li><a href="{% url 'breeding:falcon-detail' young.id %}">{{ young.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </li>
+  <li>In pair:
+    <ul>
+      {% if falcon.sex == 'M' %}
+      {% for pair in falcon.male_pair.all %}
+      <li><a href="{% url 'breeding:pair-detail' pair.id %}">{{ pair.number }}</a></li>
+      {% endfor %}
+      {% else %}
+      {% for pair in falcon.female_pair.all %}
+      <li><a href="{% url 'breeding:pair-detail' pair.id %}">{{ pair.number }}</a></li>
+      {% endfor %}
+      {% endif %}
+    </ul>
+  </li>
 </ul>
+
 <div>
   <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'breeding:falcon-update' object.id %}">Update</a>
   <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'breeding:falcon-delete' object.id %}">Delete</a>

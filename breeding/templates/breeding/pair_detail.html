@@ -7,10 +7,9 @@
     Female named: <a href="{% url 'breeding:falcon-detail' pair.female.id %}">{{ pair.female.name }}</a> with
     ring no.:
     {{ pair.female.ring }}</p>
-{% if pair.offspring %}
 <h1 class="h7">Offspring:</h1>
 <ul>
-    {% for young in pair.offspring %}
+    {% for young in pair.get_youngsters %}
     <li>
         Falcon named: <a href="{% url 'breeding:falcon-detail' young.id %}">{{ young.name }}</a> with
         ring no.:
@@ -18,11 +17,10 @@
     </li>
     {% endfor %}
 </ul>
-{% else %}
-<p>Pair produced no offspring yet</p>
-{% endif %}
 <div>
-    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'breeding:pair-update' object.id %}">Update</a>
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'breeding:young-falcon-create' object.id %}">Add
+        young</a>
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'breeding:pair-update' object.id %}">Update pair</a>
     <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'breeding:pair-delete' object.id %}">Delete</a>
 </div>
 {% endblock %}

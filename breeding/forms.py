@@ -1,5 +1,5 @@
 from django import forms
-from .models import Falcon, Pair
+from .models import Falcon, Pair, Aviary
 
 
 class FalconCreateForm(forms.ModelForm):
@@ -10,6 +10,16 @@ class FalconCreateForm(forms.ModelForm):
 
         model = Falcon
         exclude = ("owner",)
+
+
+class YoungFalconCreateForm(forms.ModelForm):
+    """Form definition for FalconCreate."""
+
+    class Meta:
+        """Meta definition for FalconCreateform."""
+
+        model = Falcon
+        exclude = ("owner", "father", "mother")
 
 
 class FalconUpdateForm(forms.ModelForm):
@@ -40,3 +50,23 @@ class PairUpdateForm(forms.ModelForm):
 
         model = Pair
         exclude = ()
+
+
+class AviaryCreateForm(forms.ModelForm):
+    """Form definition for AviaryCreate."""
+
+    class Meta:
+        """Meta definition for AviaryCreateForm."""
+
+        model = Aviary
+        exclude = ("owner",)
+
+
+class AviaryUpdateForm(forms.ModelForm):
+    """Form definition for AviaryUpdate."""
+
+    class Meta:
+        """Meta definition for AviaryUpdateForm."""
+
+        model = Aviary
+        exclude = ("owner",)

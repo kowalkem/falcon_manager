@@ -1,8 +1,16 @@
 from django.views import generic
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Falcon, Pair
-from .forms import FalconCreateForm, FalconUpdateForm, PairCreateForm, PairUpdateForm
+from .models import Falcon, Pair, Aviary
+from .forms import (
+    FalconCreateForm,
+    FalconUpdateForm,
+    PairCreateForm,
+    PairUpdateForm,
+    YoungFalconCreateForm,
+    AviaryCreateForm,
+    AviaryUpdateForm,
+)
 
 
 def index(request):
@@ -96,10 +104,13 @@ class YoungFalconCreate(LoginRequiredMixin, generic.edit.CreateView):
     """ View for creating new falcon from pair """
 
     model = Falcon
-    form_class = FalconCreateForm
+    form_class = YoungFalconCreateForm
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
+        pair = Pair.objects.get(pk=self.kwargs["pair_pk"])
+        form.instance.father = Falcon.objects.get(pk=pair.male.id)
+        form.instance.mother = Falcon.objects.get(pk=pair.female.id)
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -191,4 +202,86 @@ class PairDelete(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
     def get_context_data(self, **kwargs):
         context = super(PairDelete, self).get_context_data(**kwargs)
         context["title"] = "Delete a pair"
+        return context
+
+
+class AviaryList(LoginRequiredMixin, generic.ListView):
+    """ Renders list of all aviaries """
+
+    model = Aviary
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Aviary.objects.filter(owner=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(AviaryList, self).get_context_data(**kwargs)
+        context["title"] = "List of all aviaries"
+        return context
+
+
+class AviaryDetail(LoginRequiredMixin, UserPassesTestMixin, generic.DetailView):
+    """ Renders info about aviary with specified id """
+
+    model = Aviary
+
+    def test_func(self):
+        Aviary = self.get_object()
+        return self.request.user == Aviary.owner
+
+    def get_context_data(self, **kwargs):
+        context = super(AviaryDetail, self).get_context_data(**kwargs)
+        context["title"] = "Aviary details"
+        return context
+
+
+class AviaryCreate(LoginRequiredMixin, generic.edit.CreateView):
+    """ View for creating new Aviary """
+
+    model = Aviary
+    form_class = AviaryCreateForm
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(AviaryCreate, self).get_context_data(**kwargs)
+        context["title"] = "Add a new aviary"
+        return context
+
+
+class AviaryUpdate(LoginRequiredMixin, UserPassesTestMixin, generic.edit.UpdateView):
+    """ View for updating a aviary """
+
+    model = Aviary
+    form_class = AviaryUpdateForm
+
+    def test_func(self):
+        Aviary = self.get_object()
+        return self.request.user == Aviary.owner
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(AviaryUpdate, self).get_context_data(**kwargs)
+        context["title"] = "Update a Aviary"
+        return context
+
+
+class AviaryDelete(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    """ Delete an aviary with a specified id """
+
+    model = Aviary
+    success_url = "/breeding/aviaries"
+
+    def test_func(self):
+        Aviary = self.get_object()
+        return self.request.user == Aviary.owner
+
+    def get_context_data(self, **kwargs):
+        context = super(AviaryDelete, self).get_context_data(**kwargs)
+        context["title"] = "Delete a Aviary"
         return context

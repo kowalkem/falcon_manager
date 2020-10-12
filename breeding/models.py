@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.shortcuts import reverse
 from django.core.exceptions import ValidationError
@@ -38,12 +39,19 @@ class Falcon(models.Model):
     species = models.ForeignKey(
         "Species",
         on_delete=models.CASCADE,
-        related_name="_species",
+        related_name="species",
         null=True,
         blank=True,
     )
     sex = models.CharField(max_length=1, choices=SEX, null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
+    birth_cert = models.ForeignKey(
+        "Birth_cert",
+        on_delete=models.PROTECT,
+        related_name="birth_cert",
+        null=True,
+        blank=True,
+    )
     CITES_num = models.CharField(max_length=30, null=True, blank=True)
     CITES_img = models.FileField(null=True, blank=True, upload_to="falcon_docs/")
     registration_img = models.FileField(null=True, blank=True, upload_to="falcon_docs/")
@@ -53,42 +61,31 @@ class Falcon(models.Model):
     in_aviary = models.ForeignKey(
         "Aviary", on_delete=models.CASCADE, null=True, blank=True
     )
-    in_pair = models.ForeignKey("Pair", on_delete=models.CASCADE, null=True, blank=True)
     father = models.ForeignKey(
-        "self", on_delete=models.PROTECT, related_name="_father", null=True, blank=True
-    )
-    mother = models.ForeignKey(
-        "self", on_delete=models.PROTECT, related_name="_mother", null=True, blank=True
-    )
-    youngsters = models.ForeignKey(
         "self",
         on_delete=models.PROTECT,
-        related_name="_youngsters",
+        related_name="falcon_father",
+        null=True,
+        blank=True,
+    )
+    mother = models.ForeignKey(
+        "self",
+        on_delete=models.PROTECT,
+        related_name="falcon_mother",
         null=True,
         blank=True,
     )
     width_young = models.PositiveSmallIntegerField(null=True, blank=True)
     length_young = models.PositiveSmallIntegerField(null=True, blank=True)
     weight_young = models.PositiveSmallIntegerField(null=True, blank=True)
-    photos_young = models.ForeignKey(
-        "Photo",
-        on_delete=models.CASCADE,
-        related_name="_photos_young",
-        null=True,
-        blank=True,
-    )
     width_old = models.PositiveSmallIntegerField(null=True, blank=True)
     length_old = models.PositiveSmallIntegerField(null=True, blank=True)
     weight_old = models.PositiveSmallIntegerField(null=True, blank=True)
-    photos_old = models.ForeignKey(
-        "Photo",
-        on_delete=models.CASCADE,
-        related_name="_photos_old",
-        null=True,
-        blank=True,
-    )
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.PROTECT)
     additional_info = models.CharField(max_length=255, null=True, blank=True)
+
+    def get_youngsters(self):
+        return Falcon.objects.filter(Q(father=self) | Q(mother=self))
 
     def get_fields_for_template(self):
         """ Gets iterable for the loop in template """
@@ -111,14 +108,21 @@ class Pair(models.Model):
 
     number = models.IntegerField()
     male = models.ForeignKey(
-        Falcon, on_delete=models.PROTECT, related_name="+", validators=[validate_male]
+        Falcon,
+        on_delete=models.PROTECT,
+        related_name="male_pair",
+        validators=[validate_male],
     )
     female = models.ForeignKey(
-        Falcon, on_delete=models.PROTECT, related_name="+", validators=[validate_female]
+        Falcon,
+        on_delete=models.PROTECT,
+        related_name="female_pair",
+        validators=[validate_female],
     )
-    offspring = models.ForeignKey(
-        Falcon, on_delete=models.PROTECT, null=True, blank=True
-    )
+
+    def get_youngsters(self):
+        """ Gets iterable for the loop in template """
+        return Falcon.objects.filter(father=self.male, mother=self.female)
 
     def get_absolute_url(self):
         """ Returns the url to access a detail record for this pair """
@@ -142,9 +146,12 @@ class Aviary(models.Model):
     """ Model for a single aviary """
 
     number = models.IntegerField(default=0)
-    pair = models.ForeignKey(Pair, on_delete=models.PROTECT, null=True, blank=True)
-    falcons = models.ManyToManyField(Falcon, blank=True)
     last_cleaned = models.DateField(null=True, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.PROTECT)
+
+    def get_absolute_url(self):
+        """ Returns the url to access a detail record for this aviary """
+        return reverse("breeding:aviary-detail", args=[str(self.id)])
 
     def __str__(self):
         return "Aviary number: " + str(self.number)
@@ -154,6 +161,7 @@ class Photo(models.Model):
     """ Model to enable saving multiple photos per falcon """
 
     img = models.ImageField(null=True, blank=True, upload_to="falcon_imgs/")
+    falcon = models.ForeignKey(Falcon, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
         return "Falcon Photo"
@@ -184,3 +192,10 @@ class Office(models.Model):
     zip_code = models.CharField(max_length=7)
     city = models.CharField(max_length=32)
     office_type = models.CharField(max_length=4, choices=TYPES)
+
+
+class Birth_cert(models.Model):
+    """ Model for birth certificates """
+
+    signature = models.CharField(max_length=16)
+    cert_file = models.FileField(null=True, blank=True, upload_to="falcon_docs/")
