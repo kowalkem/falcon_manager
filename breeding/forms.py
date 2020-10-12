@@ -10,6 +10,7 @@ class FalconCreateForm(forms.ModelForm):
 
         model = Falcon
         exclude = ("owner",)
+        widgets = {"birth_date": forms.DateTimeInput(attrs={"type": "date"})}
 
 
 class YoungFalconCreateForm(forms.ModelForm):
@@ -20,6 +21,7 @@ class YoungFalconCreateForm(forms.ModelForm):
 
         model = Falcon
         exclude = ("owner", "father", "mother")
+        widgets = {"birth_date": forms.DateTimeInput(attrs={"type": "date"})}
 
 
 class FalconUpdateForm(forms.ModelForm):
@@ -30,6 +32,7 @@ class FalconUpdateForm(forms.ModelForm):
 
         model = Falcon
         exclude = ("owner",)
+        widgets = {"birth_date": forms.DateTimeInput(attrs={"type": "date"})}
 
 
 class PairCreateForm(forms.ModelForm):
@@ -60,6 +63,7 @@ class AviaryCreateForm(forms.ModelForm):
 
         model = Aviary
         exclude = ("owner",)
+        widgets = {"last_cleaned": forms.DateTimeInput(attrs={"type": "date"})}
 
 
 class AviaryUpdateForm(forms.ModelForm):
@@ -70,3 +74,4 @@ class AviaryUpdateForm(forms.ModelForm):
 
         model = Aviary
         exclude = ("owner",)
+        widgets = {"last_cleaned": forms.DateTimeInput(attrs={"type": "date"})}
