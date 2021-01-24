@@ -20,6 +20,9 @@ typed-ast = "==1.4.1"
 typing-extensions = "==3.7.4.2"
 Django = "==3.0.7"
 Pillow = "==7.1.2"
+autopep8 = "*"
+textract = "*"
+python-docx = "*"
 
 [requires]
 python_version = "3.8"

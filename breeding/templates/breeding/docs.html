@@ -1,0 +1,8 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h4>Please select a document or set of documents you'd like to create:</h4>
+<ul>
+    <li><a href="{% url 'breeding:birth_cert-create' %}">Birth certificate</a></li>
+</ul>
+{% endblock %}

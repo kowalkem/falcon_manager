@@ -1,7 +1,8 @@
 from django.views import generic
+from django.views.generic.base import TemplateView
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Falcon, Pair, Aviary
+from .models import Falcon, Pair, Aviary, Birth_cert
 from .forms import (
     FalconCreateForm,
     FalconUpdateForm,
@@ -10,6 +11,7 @@ from .forms import (
     YoungFalconCreateForm,
     AviaryCreateForm,
     AviaryUpdateForm,
+    Birth_certCreateForm,
 )
 
 
@@ -284,4 +286,42 @@ class AviaryDelete(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
     def get_context_data(self, **kwargs):
         context = super(AviaryDelete, self).get_context_data(**kwargs)
         context["title"] = "Delete a Aviary"
+        return context
+
+
+class Docs(LoginRequiredMixin, TemplateView):
+    template_name = "breeding/docs.html"
+
+
+class Birth_certCreate(LoginRequiredMixin, generic.edit.CreateView):
+
+    model = Birth_cert
+    form_class = Birth_certCreateForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(Birth_certCreate, self).get_context_data(**kwargs)
+        context["title"] = "Add a new birth_cert"
+        return context
+
+
+class Birth_certDetail(LoginRequiredMixin, UserPassesTestMixin, generic.DetailView):
+
+    model = Birth_cert
+
+    def test_func(self):
+        Birth_cert = self.get_object()
+        return self.request.user == Birth_cert.owner
+
+    def get_context_data(self, **kwargs):
+        context = super(Birth_certDetail, self).get_context_data(**kwargs)
+        context["title"] = "Birth_cert details"
         return context

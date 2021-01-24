@@ -48,7 +48,6 @@ class Falcon(models.Model):
     birth_cert = models.ForeignKey(
         "Birth_cert",
         on_delete=models.PROTECT,
-        related_name="birth_cert",
         null=True,
         blank=True,
     )
@@ -199,3 +198,7 @@ class Birth_cert(models.Model):
 
     signature = models.CharField(max_length=16)
     cert_file = models.FileField(null=True, blank=True, upload_to="falcon_docs/")
+    owner = models.ForeignKey(User, on_delete=models.PROTECT)
+
+    def get_absolute_url(self):
+        return reverse("breeding:birth_cert-detail", args=[str(self.id)])

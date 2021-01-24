@@ -1,0 +1,12 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1 class="h5">Details of birth certificate signature: {{ birth_cert.signature }}</h1>
+<p>Birth certificate file: {{ birth_cert.cert_file }}</p>
+<p>Regards flacons:</p>
+<ul>
+    {% for falcon in birth_cert.falcon_set.all %}
+    <li>{{ falcon.name }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

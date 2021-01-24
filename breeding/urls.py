@@ -25,4 +25,11 @@ urlpatterns = [
     path("aviary/<int:pk>", views.AviaryDetail.as_view(), name="aviary-detail"),
     path("aviary/<int:pk>/update", views.AviaryUpdate.as_view(), name="aviary-update"),
     path("aviary/<int:pk>/delete", views.AviaryDelete.as_view(), name="aviary-delete"),
+    path("docs", views.Docs.as_view(), name="docs"),
+    path("birth_cert", views.Birth_certCreate.as_view(), name="birth_cert-create"),
+    path(
+        "birth_cert/<int:pk>",
+        views.Birth_certDetail.as_view(),
+        name="birth_cert-detail",
+    ),
 ]
