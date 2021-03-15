@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+{% if object_list %}
+<ul>
+    {% for office in object_list %}
+    <li>
+        <h4>Office: <a href="{% url 'breeding:office-detail' office.id %}">{{ office.name }}</a></h4>
+        <p>Of type: {{ office.office_type }}</p>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No records to show</p>
+{% endif %}
+<a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'breeding:office-create' %}">Add new office</a>
+{% endblock %}

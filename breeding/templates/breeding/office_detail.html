@@ -1,0 +1,13 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1 class="h5">Details of office: {{ office.name }}</h1>
+<p>Type: {{ office.office_type }}</p>
+<p>Street: {{ office.street }}</p>
+<p>Zip code: {{ office.zip_code }}</p>
+<p>City: {{ office.city }}</p>
+<div>
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'breeding:office-update' object.id %}">Update office</a>
+    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'breeding:office-delete' object.id %}">Delete</a>
+</div>
+{% endblock %}

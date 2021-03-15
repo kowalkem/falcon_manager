@@ -1,5 +1,5 @@
 from django import forms
-from .models import Falcon, Pair, Aviary, Birth_cert
+from .models import Falcon, Office, Pair, Aviary, Birth_cert
 
 
 class FalconCreateForm(forms.ModelForm):
@@ -84,10 +84,29 @@ class Birth_certCreateForm(forms.ModelForm):
         self.fields["falcons"].choices = [
             (falcon.name, falcon) for falcon in self.request.user.falcon_set.all()
         ]
+        self.fields["vet_office"].choices = [
+            (office.name, office) for office in self.request.user.office_set.filter(office_type = "PIW")
+        ]
 
     falcons = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)
 
     class Meta:
 
         model = Birth_cert
+        exclude = ("owner", "cert_file")
+
+
+class OfficeCreateForm(forms.ModelForm):
+
+    class Meta:
+
+        model = Office
+        exclude = ("owner",)
+
+
+class OfficeUpdateForm(forms.ModelForm):
+
+    class Meta:
+
+        model = Office
         exclude = ("owner",)

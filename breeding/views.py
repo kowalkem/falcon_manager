@@ -1,8 +1,9 @@
+from django.http import response
 from django.views import generic
 from django.views.generic.base import TemplateView
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Falcon, Pair, Aviary, Birth_cert
+from .models import Falcon, Pair, Aviary, Office, Birth_cert
 from .forms import (
     FalconCreateForm,
     FalconUpdateForm,
@@ -11,6 +12,8 @@ from .forms import (
     YoungFalconCreateForm,
     AviaryCreateForm,
     AviaryUpdateForm,
+    OfficeCreateForm,
+    OfficeUpdateForm,
     Birth_certCreateForm,
 )
 
@@ -305,7 +308,10 @@ class Birth_certCreate(LoginRequiredMixin, generic.edit.CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        return super().form_valid(form)
+        res = super().form_valid(form)
+        # create docx using form data and append it to form
+        print(form.is_bound)
+        return res
 
     def get_context_data(self, **kwargs):
         context = super(Birth_certCreate, self).get_context_data(**kwargs)
@@ -324,4 +330,82 @@ class Birth_certDetail(LoginRequiredMixin, UserPassesTestMixin, generic.DetailVi
     def get_context_data(self, **kwargs):
         context = super(Birth_certDetail, self).get_context_data(**kwargs)
         context["title"] = "Birth_cert details"
+        return context
+
+
+class OfficeList(LoginRequiredMixin, generic.ListView):
+
+    model = Office
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Office.objects.filter(owner=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(OfficeList, self).get_context_data(**kwargs)
+        context["title"] = "List of all offices"
+        return context
+
+
+class OfficeDetail(LoginRequiredMixin, UserPassesTestMixin, generic.DetailView):
+
+    model = Office
+
+    def test_func(self):
+        Office = self.get_object()
+        return self.request.user == Office.owner
+
+    def get_context_data(self, **kwargs):
+        context = super(OfficeDetail, self).get_context_data(**kwargs)
+        context["title"] = "Office details"
+        return context
+
+
+class OfficeCreate(LoginRequiredMixin, generic.edit.CreateView):
+    """ View for creating new Office """
+
+    model = Office
+    form_class = OfficeCreateForm
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(OfficeCreate, self).get_context_data(**kwargs)
+        context["title"] = "Add a new Office"
+        return context
+
+
+class OfficeUpdate(LoginRequiredMixin, UserPassesTestMixin, generic.edit.UpdateView):
+
+    model = Office
+    form_class = OfficeUpdateForm
+
+    def test_func(self):
+        Office = self.get_object()
+        return self.request.user == Office.owner
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(OfficeUpdate, self).get_context_data(**kwargs)
+        context["title"] = "Update a Office"
+        return context
+
+
+class OfficeDelete(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+
+    model = Office
+    success_url = "/breeding/offices"
+
+    def test_func(self):
+        Office = self.get_object()
+        return self.request.user == Office.owner
+
+    def get_context_data(self, **kwargs):
+        context = super(OfficeDelete, self).get_context_data(**kwargs)
+        context["title"] = "Delete an Office"
         return context

@@ -44,7 +44,7 @@ class Falcon(models.Model):
         blank=True,
     )
     sex = models.CharField(max_length=1, choices=SEX, null=True, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
+    birth_date = models.DateField()
     birth_cert = models.ForeignKey(
         "Birth_cert",
         on_delete=models.PROTECT,
@@ -52,8 +52,10 @@ class Falcon(models.Model):
         blank=True,
     )
     CITES_num = models.CharField(max_length=30, null=True, blank=True)
-    CITES_img = models.FileField(null=True, blank=True, upload_to="falcon_docs/")
-    registration_img = models.FileField(null=True, blank=True, upload_to="falcon_docs/")
+    CITES_img = models.FileField(
+        null=True, blank=True, upload_to="falcon_docs/")
+    registration_img = models.FileField(
+        null=True, blank=True, upload_to="falcon_docs/")
     RDOS_permission_img = models.FileField(
         null=True, blank=True, upload_to="falcon_docs/"
     )
@@ -160,7 +162,8 @@ class Photo(models.Model):
     """ Model to enable saving multiple photos per falcon """
 
     img = models.ImageField(null=True, blank=True, upload_to="falcon_imgs/")
-    falcon = models.ForeignKey(Falcon, on_delete=models.PROTECT, null=True, blank=True)
+    falcon = models.ForeignKey(
+        Falcon, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
         return "Falcon Photo"
@@ -191,13 +194,20 @@ class Office(models.Model):
     zip_code = models.CharField(max_length=7)
     city = models.CharField(max_length=32)
     office_type = models.CharField(max_length=4, choices=TYPES)
+    owner = models.ForeignKey(User, on_delete=models.PROTECT)
+
+    def get_absolute_url(self):
+        return reverse("breeding:office-detail", args=[str(self.id)])
 
 
 class Birth_cert(models.Model):
     """ Model for birth certificates """
 
-    signature = models.CharField(max_length=16)
-    cert_file = models.FileField(null=True, blank=True, upload_to="falcon_docs/")
+    document_number = models.CharField(max_length=16)
+    vet_office = models.ForeignKey(Office, on_delete=models.PROTECT)
+    issued_date = models.DateField()
+    cert_file = models.FileField(
+        null=True, blank=True, upload_to="falcon_docs/")
     owner = models.ForeignKey(User, on_delete=models.PROTECT)
 
     def get_absolute_url(self):
