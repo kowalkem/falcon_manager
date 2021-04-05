@@ -1,8 +1,11 @@
+import os
+from django.conf import settings
 from django.http import response
 from django.views import generic
 from django.views.generic.base import TemplateView
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from docx import Document
 from .models import Falcon, Pair, Aviary, Office, Birth_cert
 from .forms import (
     FalconCreateForm,
@@ -310,11 +313,16 @@ class Birth_certCreate(LoginRequiredMixin, generic.edit.CreateView):
         form.instance.owner = self.request.user
         res = super().form_valid(form)
         # create docx using form data and append it to form
+        doc = Document(os.path.join(settings.MEDIA_ROOT, 'falcon_docs/birth_cert.docx'))
+        doc.tables[0].rows[1].cells[1].paragraphs[0].runs[0].text = form.instance.owner.username
+        doc.save(os.path.join(settings.MEDIA_ROOT, f'falcon_docs/{form.instance.owner.username}/birth_cert_{form.instance.document_number}.docx'))
         print(form.is_bound)
         return res
 
     def get_context_data(self, **kwargs):
         context = super(Birth_certCreate, self).get_context_data(**kwargs)
+        context["form"].fields["vet_office"].queryset = Office.objects.filter(office_type="PIW")
+        context["form"].fields["falcons"].queryset = Falcon.objects.all()
         context["title"] = "Add a new birth_cert"
         return context
 

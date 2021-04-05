@@ -45,12 +45,6 @@ class Falcon(models.Model):
     )
     sex = models.CharField(max_length=1, choices=SEX, null=True, blank=True)
     birth_date = models.DateField()
-    birth_cert = models.ForeignKey(
-        "Birth_cert",
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-    )
     CITES_num = models.CharField(max_length=30, null=True, blank=True)
     CITES_img = models.FileField(
         null=True, blank=True, upload_to="falcon_docs/")
@@ -195,6 +189,9 @@ class Office(models.Model):
     city = models.CharField(max_length=32)
     office_type = models.CharField(max_length=4, choices=TYPES)
     owner = models.ForeignKey(User, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.name
 
     def get_absolute_url(self):
         return reverse("breeding:office-detail", args=[str(self.id)])

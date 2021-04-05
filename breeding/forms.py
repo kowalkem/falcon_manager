@@ -81,19 +81,16 @@ class Birth_certCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
-        self.fields["falcons"].choices = [
-            (falcon.name, falcon) for falcon in self.request.user.falcon_set.all()
-        ]
-        self.fields["vet_office"].choices = [
-            (office.name, office) for office in self.request.user.office_set.filter(office_type = "PIW")
-        ]
-
-    falcons = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)
+        self.fields['falcons'] = forms.MultipleChoiceField(
+            widget=forms.CheckboxSelectMultiple,
+            choices=(((choice.id), choice) for choice in Falcon.objects.all())
+        )
 
     class Meta:
 
         model = Birth_cert
         exclude = ("owner", "cert_file")
+        widgets = {"issued_date": forms.DateTimeInput(attrs={"type": "date"})}
 
 
 class OfficeCreateForm(forms.ModelForm):
