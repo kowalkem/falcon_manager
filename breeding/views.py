@@ -311,10 +311,26 @@ class Birth_certCreate(LoginRequiredMixin, generic.edit.CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
+        falcons_ids = form.data.getlist('falcons')
+        falcons = [Falcon.objects.get(pk=id) for id in falcons_ids]
         res = super().form_valid(form)
         # create docx using form data and append it to form
         doc = Document(os.path.join(settings.MEDIA_ROOT, 'falcon_docs/birth_cert.docx'))
+        doc.paragraphs[0].runs[1] = form.instance.document_number
+
         doc.tables[0].rows[1].cells[1].paragraphs[0].runs[0].text = form.instance.owner.username
+        profile = form.instance.owner.user_profile
+        doc.tables[0].rows[2].cells[1].paragraphs[0].runs[0].text = f'{profile.street} {profile.house_number}, {profile.zip_code} {profile.city}'
+
+
+        doc.tables[1].rows[1].cells[1].paragraphs[0].runs[0].text = ''
+        doc.tables[1].rows[2].cells[1].paragraphs[0].runs[0].text = ''
+        species_list = [falcon.species for falcon in falcons]
+        species_count = [(species.name, species.latin, species_list.count(species)) for species in set(species_list)]
+        for species in species_count:
+            doc.tables[1].rows[1].cells[1].paragraphs[0].runs[0].text = f'{species[1]} - {species[2]}szt.'
+            doc.tables[1].rows[2].cells[1].paragraphs[0].runs[0].text = f'{species[0]} - {species[2]}szt.'
+        
         doc.save(os.path.join(settings.MEDIA_ROOT, f'falcon_docs/{form.instance.owner.username}/birth_cert_{form.instance.document_number}.docx'))
         print(form.is_bound)
         return res

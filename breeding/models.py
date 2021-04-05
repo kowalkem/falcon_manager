@@ -40,11 +40,10 @@ class Falcon(models.Model):
         "Species",
         on_delete=models.CASCADE,
         related_name="species",
-        null=True,
-        blank=True,
     )
     sex = models.CharField(max_length=1, choices=SEX, null=True, blank=True)
     birth_date = models.DateField()
+    birth_cert = models.ForeignKey("Birth_cert", on_delete=models.PROTECT, null=True, blank=True)
     CITES_num = models.CharField(max_length=30, null=True, blank=True)
     CITES_img = models.FileField(
         null=True, blank=True, upload_to="falcon_docs/")
