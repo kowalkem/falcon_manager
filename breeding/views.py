@@ -1,4 +1,4 @@
-import os
+import os, datetime
 from django.conf import settings
 from django.http import response
 from django.views import generic
@@ -330,7 +330,32 @@ class Birth_certCreate(LoginRequiredMixin, generic.edit.CreateView):
         for species in species_count:
             doc.tables[1].rows[1].cells[1].paragraphs[0].runs[0].text = f'{species[1]} - {species[2]}szt.'
             doc.tables[1].rows[2].cells[1].paragraphs[0].runs[0].text = f'{species[0]} - {species[2]}szt.'
-        
+
+        # num females
+        doc.tables[3].rows[0].cells[6].paragraphs[0].runs[0].text = f'Żeńskich: {len([falcon for falcon in falcons if falcon.sex == "F"])}'
+        # num males
+        doc.tables[3].rows[1].cells[0].paragraphs[0].runs[0].text = f'męskich: {len([falcon for falcon in falcons if falcon.sex == "M"])}'
+        # num undefined
+        doc.tables[3].rows[1].cells[2].paragraphs[0].runs[0].text = f'płci nieznanej: {len([falcon for falcon in falcons if falcon.sex == None])}'
+        # num total
+        doc.tables[3].rows[1].cells[4].paragraphs[0].runs[0].text = f'łącznie: {len(falcons)}'
+
+        # birth dates
+        birthdates = [falcon.birth_date for falcon in falcons]
+        doc.tables[4].rows[1].cells[0].paragraphs[0].runs[0].text = f'urodzenia (wyklucia itp.): {min(birthdates)} - {max(birthdates)}'
+
+        # vet control date
+        doc.tables[4].rows[1].cells[1].paragraphs[0].runs[0].text = f'kontroli weterynaryjnej miotu: {max(birthdates) + datetime.timedelta(days=5)}'
+
+        # list of falcons
+        for i, falcon in enumerate(falcons, start=1):
+            if len(doc.tables[5].rows) < i+2:
+                doc.tables[5].add_row(doc.tables[5].rows[2])
+            doc.tables[5].rows[i+1].cells[0].paragraphs[0].runs[0].text = str(i)
+            doc.tables[5].rows[i+1].cells[1].paragraphs[0].runs[0].text = falcon.get_sex_display() if falcon.sex else 'płeć nieznana'
+            doc.tables[5].rows[i+1].cells[2].paragraphs[0].runs[0].text = f'Obrączka zamknięta nr {falcon.ring}'
+            doc.tables[5].rows[i+1].cells[3].paragraphs[0].runs[0].text = 'brak'
+
         doc.save(os.path.join(settings.MEDIA_ROOT, f'falcon_docs/{form.instance.owner.username}/birth_cert_{form.instance.document_number}.docx'))
         print(form.is_bound)
         return res
