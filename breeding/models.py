@@ -43,6 +43,7 @@ class Falcon(models.Model):
     )
     sex = models.CharField(max_length=1, choices=SEX, null=True, blank=True)
     birth_date = models.DateField()
+    source = models.CharField(max_length=30, null=True, blank=True)
     birth_cert = models.ForeignKey("Birth_cert", on_delete=models.PROTECT, null=True, blank=True)
     CITES_num = models.CharField(max_length=30, null=True, blank=True)
     CITES_img = models.FileField(
@@ -80,6 +81,9 @@ class Falcon(models.Model):
 
     def get_youngsters(self):
         return Falcon.objects.filter(Q(father=self) | Q(mother=self))
+
+    def get_parents(self):
+        return Pair.objects.get(male=self.father, female=self.mother)
 
     def get_fields_for_template(self):
         """ Gets iterable for the loop in template """

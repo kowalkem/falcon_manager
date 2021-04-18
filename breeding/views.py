@@ -20,6 +20,11 @@ from .forms import (
     Birth_certCreateForm,
 )
 
+# utility function to remove row from docx table
+def remove_row(table, row):
+    tbl = table._tbl
+    tr = row._tr
+    tbl.remove(tr)
 
 def index(request):
     """ Renders index page for breeding app """
@@ -348,14 +353,47 @@ class Birth_certCreate(LoginRequiredMixin, generic.edit.CreateView):
         doc.tables[4].rows[1].cells[1].paragraphs[0].runs[0].text = f'kontroli weterynaryjnej miotu: {max(birthdates) + datetime.timedelta(days=5)}'
 
         # list of falcons
+        falcon_list_table_rows = doc.tables[5].rows
         for i, falcon in enumerate(falcons, start=1):
-            if len(doc.tables[5].rows) < i+2:
-                doc.tables[5].add_row(doc.tables[5].rows[2])
-            doc.tables[5].rows[i+1].cells[0].paragraphs[0].runs[0].text = str(i)
-            doc.tables[5].rows[i+1].cells[1].paragraphs[0].runs[0].text = falcon.get_sex_display() if falcon.sex else 'płeć nieznana'
-            doc.tables[5].rows[i+1].cells[2].paragraphs[0].runs[0].text = f'Obrączka zamknięta nr {falcon.ring}'
-            doc.tables[5].rows[i+1].cells[3].paragraphs[0].runs[0].text = 'brak'
+            if len(falcon_list_table_rows) < i+2:
+                doc.tables[5].add_row(falcon_list_table_rows[2])
+            falcon_list_table_rows[i+1].cells[0].paragraphs[0].runs[0].text = str(i)
+            falcon_list_table_rows[i+1].cells[1].paragraphs[0].runs[0].text = falcon.get_sex_display() if falcon.sex else 'płeć nieznana'
+            falcon_list_table_rows[i+1].cells[2].paragraphs[0].runs[0].text = f'Obrączka zamknięta nr {falcon.ring}'
+            falcon_list_table_rows[i+1].cells[3].paragraphs[0].runs[0].text = 'brak'
 
+        while len(falcon_list_table_rows) > len(falcons) + 2:
+            row_to_delete = falcon_list_table_rows[len(falcon_list_table_rows) - 1]
+            remove_row(doc.tables[5], row_to_delete)
+
+        # list of parents
+        display_data = [[], []]
+        pair_list_rows = doc.tables[7].rows
+
+        for youngster_index, falcon in enumerate(falcons, start=1):
+            pair = falcon.get_parents()
+            if pair in display_data[0]:
+                display_data[1][display_data[0].index(pair)].append(youngster_index)
+            else:
+                display_data[0].append(pair)
+                display_data[1].append([youngster_index])
+        print(display_data)
+        for i, (pair, youngster_indices) in enumerate(zip(display_data[0], display_data[1]), start=1):
+            row_index = i*2
+            pair_list_rows[row_index].cells[0].paragraphs[0].runs[0].text = f'{i}. matka*\n(dla osobników z pozycji {*["6." + str(y) for y in youngster_indices],}'
+            pair_list_rows[row_index].cells[1].paragraphs[0].runs[0].text = str(pair.female.birth_date)
+            pair_list_rows[row_index].cells[2].paragraphs[0].runs[0].text = pair.female.source
+            pair_list_rows[row_index].cells[3].paragraphs[0].runs[0].text = pair.female.CITES_num
+            row_index = i*2+1
+            pair_list_rows[row_index].cells[0].paragraphs[0].runs[0].text = f'{i}. ojciec*\n(dla osobników z pozycji {*["6." + str(y) for y in youngster_indices],}'
+            pair_list_rows[row_index].cells[1].paragraphs[0].runs[0].text = str(pair.male.birth_date)
+            pair_list_rows[row_index].cells[2].paragraphs[0].runs[0].text = pair.male.source
+            pair_list_rows[row_index].cells[3].paragraphs[0].runs[0].text = pair.male.CITES_num
+
+        while len(pair_list_rows) > len(display_data[0])*2 + 2:
+            row_to_delete = pair_list_rows[len(pair_list_rows) - 1]
+            remove_row(doc.tables[7], row_to_delete)
+        
         doc.save(os.path.join(settings.MEDIA_ROOT, f'falcon_docs/{form.instance.owner.username}/birth_cert_{form.instance.document_number}.docx'))
         print(form.is_bound)
         return res
