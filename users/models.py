@@ -4,7 +4,7 @@ from PIL import Image
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     city = models.CharField(max_length=32)
     zip_code = models.CharField(max_length=8)
     street = models.CharField(max_length=32)

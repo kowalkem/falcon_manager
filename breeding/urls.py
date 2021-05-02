@@ -30,11 +30,15 @@ urlpatterns = [
     path("office/<int:pk>", views.OfficeDetail.as_view(), name="office-detail"),
     path("office/<int:pk>/update", views.OfficeUpdate.as_view(), name="office-update"),
     path("office/<int:pk>/delete", views.OfficeDelete.as_view(), name="office-delete"),
-    path("docs", views.Docs.as_view(), name="docs"),
-    path("birth_cert", views.Birth_certCreate.as_view(), name="birth_cert-create"),
+    path("docs", views.DocList.as_view(), name="docs"),
+    path("doc/add", views.DocCreate.as_view(), name="doc-create"),
+    path("birth_certs/", views.Birth_certList.as_view(), name="birth_certs"),
+    path("birth_cert/add", views.Birth_certCreate.as_view(), name="birth_cert-create"),
     path(
         "birth_cert/<int:pk>",
         views.Birth_certDetail.as_view(),
         name="birth_cert-detail",
     ),
+    path("birth_cert/<int:pk>/update", views.Birth_certUpdate.as_view(), name="birth_cert-update"),
+    path("birth_cert/<int:pk>/delete", views.Birth_certDelete.as_view(), name="birth_cert-delete"),
 ]

@@ -93,6 +93,21 @@ class Birth_certCreateForm(forms.ModelForm):
         widgets = {"issued_date": forms.DateTimeInput(attrs={"type": "date"})}
 
 
+class Birth_certUpdateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['falcons'] = forms.MultipleChoiceField(
+            widget=forms.CheckboxSelectMultiple,
+            choices=(((choice.id), choice) for choice in Falcon.objects.all())
+        )
+
+    class Meta:
+
+        model = Birth_cert
+        exclude = ("owner",)
+        widgets = {"issued_date": forms.DateTimeInput(attrs={"type": "date"})}
+
+
 class OfficeCreateForm(forms.ModelForm):
 
     class Meta:

@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+{% if object_list %}
+<ul>
+    {% for birth_cert in object_list %}
+    <li>
+        <h4>Birth certificate number: <a href="{% url 'breeding:birth_cert-detail' birth_cert.id %}">{{ birth_cert.document_number }}</a></h4>
+        <p>Issued at: {{ birth_cert.issued_date }}</p>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No records to show</p>
+{% endif %}
+<a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'breeding:birth_cert-create' %}">Add new birth_cert</a>
+{% endblock %}

@@ -5,6 +5,7 @@ from django.views import generic
 from django.views.generic.base import TemplateView
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.files import File
 from docx import Document
 from .models import Falcon, Pair, Aviary, Office, Birth_cert
 from .forms import (
@@ -18,6 +19,7 @@ from .forms import (
     OfficeCreateForm,
     OfficeUpdateForm,
     Birth_certCreateForm,
+    Birth_certUpdateForm,
 )
 
 # utility function to remove row from docx table
@@ -300,8 +302,26 @@ class AviaryDelete(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
         return context
 
 
-class Docs(LoginRequiredMixin, TemplateView):
-    template_name = "breeding/docs.html"
+class DocList(LoginRequiredMixin, TemplateView):
+    template_name = "breeding/doc_list.html"
+
+
+class DocCreate(LoginRequiredMixin, TemplateView):
+    template_name = "breeding/doc_create.html"
+
+
+class Birth_certList(LoginRequiredMixin, generic.ListView):
+
+    model = Birth_cert
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Birth_cert.objects.filter(owner=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(Birth_certList, self).get_context_data(**kwargs)
+        context["title"] = "List of all birth_certs"
+        return context
 
 
 class Birth_certCreate(LoginRequiredMixin, generic.edit.CreateView):
@@ -324,7 +344,7 @@ class Birth_certCreate(LoginRequiredMixin, generic.edit.CreateView):
         doc.paragraphs[0].runs[1] = form.instance.document_number
 
         doc.tables[0].rows[1].cells[1].paragraphs[0].runs[0].text = form.instance.owner.username
-        profile = form.instance.owner.user_profile
+        profile = form.instance.owner.profile
         doc.tables[0].rows[2].cells[1].paragraphs[0].runs[0].text = f'{profile.street} {profile.house_number}, {profile.zip_code} {profile.city}'
 
 
@@ -384,18 +404,33 @@ class Birth_certCreate(LoginRequiredMixin, generic.edit.CreateView):
             pair_list_rows[row_index].cells[1].paragraphs[0].runs[0].text = str(pair.female.birth_date)
             pair_list_rows[row_index].cells[2].paragraphs[0].runs[0].text = pair.female.source
             pair_list_rows[row_index].cells[3].paragraphs[0].runs[0].text = pair.female.CITES_num
+            pair_list_rows[row_index].cells[3].paragraphs[0].runs[1].text = ""
             row_index = i*2+1
             pair_list_rows[row_index].cells[0].paragraphs[0].runs[0].text = f'{i}. ojciec*\n(dla osobników z pozycji {*["6." + str(y) for y in youngster_indices],}'
             pair_list_rows[row_index].cells[1].paragraphs[0].runs[0].text = str(pair.male.birth_date)
             pair_list_rows[row_index].cells[2].paragraphs[0].runs[0].text = pair.male.source
             pair_list_rows[row_index].cells[3].paragraphs[0].runs[0].text = pair.male.CITES_num
+            pair_list_rows[row_index].cells[3].paragraphs[0].runs[1].text = ""
 
         while len(pair_list_rows) > len(display_data[0])*2 + 2:
             row_to_delete = pair_list_rows[len(pair_list_rows) - 1]
             remove_row(doc.tables[7], row_to_delete)
+
+        doc.tables[10].rows[0].cells[1].text = f'Powiatowy Lekarz Weterynarii w '
+
+        doc_rel_path = f'falcon_docs/{form.instance.owner.username}/birth_cert_{form.instance.document_number}.docx'
+        doc_path = os.path.join(settings.MEDIA_ROOT, doc_rel_path)
         
-        doc.save(os.path.join(settings.MEDIA_ROOT, f'falcon_docs/{form.instance.owner.username}/birth_cert_{form.instance.document_number}.docx'))
-        print(form.is_bound)
+        doc.save(doc_path)
+
+        with open(doc_path, 'rb') as f:
+            form.instance.cert_file.save(f'birth_cert_{form.instance.document_number}', File(f))
+            form.instance.save()
+
+        for falcon in falcons:
+            falcon.birth_cert = form.instance
+            falcon.save()
+
         return res
 
     def get_context_data(self, **kwargs):
@@ -417,6 +452,40 @@ class Birth_certDetail(LoginRequiredMixin, UserPassesTestMixin, generic.DetailVi
     def get_context_data(self, **kwargs):
         context = super(Birth_certDetail, self).get_context_data(**kwargs)
         context["title"] = "Birth_cert details"
+        return context
+
+
+class Birth_certUpdate(LoginRequiredMixin, UserPassesTestMixin, generic.edit.UpdateView):
+
+    model = Birth_cert
+    form_class = Birth_certUpdateForm
+
+    def test_func(self):
+        Birth_cert = self.get_object()
+        return self.request.user == Birth_cert.owner
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(Birth_certUpdate, self).get_context_data(**kwargs)
+        context["title"] = "Update a Birth_cert"
+        return context
+
+
+class Birth_certDelete(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+
+    model = Birth_cert
+    success_url = "/breeding/birth_certs"
+
+    def test_func(self):
+        Birth_cert = self.get_object()
+        return self.request.user == Birth_cert.owner
+
+    def get_context_data(self, **kwargs):
+        context = super(Birth_certDelete, self).get_context_data(**kwargs)
+        context["title"] = "Delete a Birth_cert"
         return context
 
 
