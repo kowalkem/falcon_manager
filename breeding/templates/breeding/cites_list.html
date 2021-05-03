@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+{% if object_list %}
+<ul>
+    {% for birth_cert in object_list %}
+    <li>
+        <h4><a href="{% url 'breeding:cites-detail' birth_cert.id %}">CITES number: {{ cites.document_number }}</a></h4>
+        <p>Issued at: {{ cites.issued_date }}</p>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No records to show</p>
+{% endif %}
+<a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'breeding:cites-create' %}">Add new CITES</a>
+{% endblock %}

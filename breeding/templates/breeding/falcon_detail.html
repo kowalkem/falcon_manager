@@ -4,8 +4,10 @@
 <h1 class="h5">Details of falcon: {{ falcon.name }}</h1>
 <ul>
   {% for name, verbose, value in falcon.get_fields_for_template %}
-  {% if name == 'CITES_img' and value %}
-  <li>{{ verbose }}: <a href="{{ falcon.CITES_img.url }}">pdf</a></li>
+  {% if name == 'birth_cert' and value %}
+  <li>{{ verbose }}: <a href="{{ falcon.birth_cert.cert_file.url }}">Download</a></li>
+  {% elif name == 'CITES' and value %}
+  <li>{{ verbose }}: <a href="{{ falcon.CITES.cites_file.url }}">Download</a></li>
   {% elif name == 'registration_img' and value %}
   <li>{{ verbose }}: <a href="{{ falcon.registration_img.url }}">pdf</a></li>
   {% elif name == 'RDOS_permission_img' and value %}
