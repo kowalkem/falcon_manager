@@ -348,8 +348,8 @@ class Birth_certCreate(LoginRequiredMixin, generic.edit.CreateView):
         falcons = [Falcon.objects.get(pk=id) for id in falcons_ids]
         res = super().form_valid(form)
         # create docx using form data and append it to form
-        doc = Document(os.path.join(settings.MEDIA_ROOT,
-                                    'falcon_docs/birth_cert.docx'))
+        doc = Document(os.path.join(settings.STATIC_ROOT,
+                                    'birth_cert.docx'))
         doc.paragraphs[0].runs[1] = form.instance.document_number
 
         doc.tables[0].rows[1].cells[1].paragraphs[0].runs[0].text = form.instance.owner.username
@@ -552,7 +552,7 @@ class CITESCreate(LoginRequiredMixin, generic.edit.CreateView):
         for falcon in falcons:
             # create docx using form data and append it to form
             doc = Document(os.path.join(
-                settings.MEDIA_ROOT, 'falcon_docs/cites.docx'))
+                settings.STATIC_ROOT, 'cites.docx'))
             # owner data
             doc.tables[0].rows[1].cells[1].paragraphs[1].runs[0].text = form.instance.owner.username
             profile = form.instance.owner.profile
