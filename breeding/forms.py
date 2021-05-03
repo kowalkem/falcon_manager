@@ -1,5 +1,6 @@
+import datetime
 from django import forms
-from .models import Falcon, Office, Pair, Aviary, Birth_cert
+from .models import Falcon, Office, Pair, Aviary, Birth_cert, CITES
 
 
 class FalconCreateForm(forms.ModelForm):
@@ -105,7 +106,38 @@ class Birth_certUpdateForm(forms.ModelForm):
 
         model = Birth_cert
         exclude = ("owner",)
+        widgets = {"issued_date": forms.DateTimeInput(attrs={"type": "date", "value": datetime.datetime.now().strftime("%d-%m-%Y")})}
+
+
+class CITESCreateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+        self.fields['falcons'] = forms.MultipleChoiceField(
+            widget=forms.CheckboxSelectMultiple,
+            choices=(((choice.id), choice) for choice in Falcon.objects.all())
+        )
+
+    class Meta:
+
+        model = CITES
+        exclude = ("owner", "cites_file", "document_number", "issued_date")
         widgets = {"issued_date": forms.DateTimeInput(attrs={"type": "date"})}
+
+
+class CITESUpdateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['falcons'] = forms.MultipleChoiceField(
+            widget=forms.CheckboxSelectMultiple,
+            choices=(((choice.id), choice) for choice in Falcon.objects.all())
+        )
+
+    class Meta:
+
+        model = CITES
+        exclude = ("owner",)
+        widgets = {"issued_date": forms.DateTimeInput(attrs={"type": "date", "value": datetime.datetime.now().strftime("%d-%m-%Y")})}
 
 
 class OfficeCreateForm(forms.ModelForm):

@@ -41,4 +41,14 @@ urlpatterns = [
     ),
     path("birth_cert/<int:pk>/update", views.Birth_certUpdate.as_view(), name="birth_cert-update"),
     path("birth_cert/<int:pk>/delete", views.Birth_certDelete.as_view(), name="birth_cert-delete"),
+    path("birth_certs/", views.Birth_certList.as_view(), name="birth_certs"),
+    path("cites/", views.CITESList.as_view(), name="cites"),
+    path("cites/add", views.CITESCreate.as_view(), name="cites-create"),
+    path(
+        "cites/<int:pk>",
+        views.CITESDetail.as_view(),
+        name="cites-detail",
+    ),
+    path("cites/<int:pk>/update", views.CITESUpdate.as_view(), name="cites-update"),
+    path("cites/<int:pk>/delete", views.CITESDelete.as_view(), name="cites-delete"),
 ]

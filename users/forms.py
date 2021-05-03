@@ -27,4 +27,4 @@ class ProfileUpdateForm(forms.ModelForm):
         """Meta definition for ProfileUpdateform."""
 
         model = Profile
-        fields = ['img']
+        fields = ['img', 'city', 'zip_code', 'street', 'house_number', 'vet_number']

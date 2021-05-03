@@ -44,10 +44,8 @@ class Falcon(models.Model):
     sex = models.CharField(max_length=1, choices=SEX, null=True, blank=True)
     birth_date = models.DateField()
     source = models.CharField(max_length=30, null=True, blank=True)
-    birth_cert = models.ForeignKey("Birth_cert", on_delete=models.PROTECT, null=True, blank=True)
-    CITES_num = models.CharField(max_length=30, null=True, blank=True)
-    CITES_img = models.FileField(
-        null=True, blank=True, upload_to="falcon_docs/")
+    birth_cert = models.ForeignKey("Birth_cert", on_delete=models.SET_NULL, null=True, blank=True)
+    CITES = models.OneToOneField("CITES", on_delete=models.SET_NULL, null=True, blank=True)
     registration_img = models.FileField(
         null=True, blank=True, upload_to="falcon_docs/")
     RDOS_permission_img = models.FileField(
@@ -212,3 +210,16 @@ class Birth_cert(models.Model):
 
     def get_absolute_url(self):
         return reverse("breeding:birth_cert-detail", args=[str(self.id)])
+
+
+class CITES(models.Model):
+
+    document_number = models.CharField(max_length=16)
+    ministry = models.ForeignKey(Office, on_delete=models.PROTECT)
+    issued_date = models.DateField(null=True, blank=True)
+    cites_file = models.FileField(
+        null=True, blank=True, upload_to="falcon_docs/")
+    owner = models.ForeignKey(User, on_delete=models.PROTECT)
+
+    def get_absolute_url(self):
+        return reverse("breeding:cites-detail", args=[str(self.id)])
