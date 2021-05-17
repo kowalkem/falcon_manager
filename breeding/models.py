@@ -32,7 +32,7 @@ def validate_female(value):
 class Falcon(models.Model):
     """ Model for a single falcon """
 
-    SEX = [("M", "samiec"), ("F", "samica")]
+    SEX = [("M", "samiec"), ("F", "samica"), ("U", "nieznana")]
 
     name = models.CharField(max_length=30, null=True, blank=True)
     ring = models.CharField(max_length=30, null=True, blank=True)
