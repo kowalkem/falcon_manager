@@ -23,6 +23,8 @@ Pillow = "==7.1.2"
 autopep8 = "*"
 textract = "*"
 python-docx = "*"
+django-heroku = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"
