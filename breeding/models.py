@@ -7,7 +7,6 @@ from django.utils.translation import gettext_lazy as _
 
 # Validators for breeding app
 
-
 def validate_male(value):
     falcon = Falcon.objects.get(pk=value)
     if falcon.sex != "M":
@@ -27,11 +26,7 @@ def validate_female(value):
 
 
 # Models for breeding app
-
-
 class Falcon(models.Model):
-    """ Model for a single falcon """
-
     SEX = [("M", "samiec"), ("F", "samica"), ("U", "nieznana")]
 
     name = models.CharField(max_length=30, null=True, blank=True)
