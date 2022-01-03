@@ -4,3 +4,4 @@
 media
 .mypy_cache
 mypy.ini
+falcon-manager
