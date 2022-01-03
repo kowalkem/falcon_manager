@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'breeding.apps.BreedingConfig',
     'users.apps.UsersConfig',
     'crispy_forms',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -147,3 +148,13 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('GMAIL_USERNAME', '')
 EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD', '')
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', '')
+
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_OCL = None
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+

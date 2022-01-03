@@ -25,6 +25,8 @@ textract = "*"
 python-docx = "*"
 django-heroku = "*"
 gunicorn = "*"
+boto3 = "*"
+django-storages = "*"
 
 [requires]
 python_version = "3.8"
